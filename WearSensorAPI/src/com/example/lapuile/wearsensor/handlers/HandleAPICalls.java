@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.example.lapuile.wearsensor.library.models.KaaApplication;
 import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
-import com.example.lapuile.wearsensor.formatters.KaaEndpointsValuesFormatter;
+import com.example.lapuile.wearsensor.library.formatters.KaaEndpointsValuesFormatter;
 import com.example.lapuile.wearsensor.repositories.KaaApplicationRepository;
 import com.example.lapuile.wearsensor.repositories.KaaEndpointRepository;
 
@@ -31,7 +31,7 @@ public class HandleAPICalls {
 	 */
 	@GET
 	@Path("config")
-	@Produces(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getApplicationDataNames(){
 		KaaApplication kaaApplication;		
 		try {
@@ -40,15 +40,7 @@ public class HandleAPICalls {
 			return "{\"message\": " + e.getMessage() + "}";
 		}
 		
-		String timeSeriesName = "";
-		for (String dataName : kaaApplication.getDataNames()) {
-			timeSeriesName += dataName + ",";
-		}
-		// remove the last ","
-		if(!timeSeriesName.isEmpty())
-			timeSeriesName = timeSeriesName.substring(0, timeSeriesName.length() - 1);
-		
-		return timeSeriesName;
+		return kaaApplication.toJSON();
 	}
 	
 	/**
@@ -89,6 +81,28 @@ public class HandleAPICalls {
 
 	}
 	
+	/**
+	 * Funzione per ottenere tutti i nomi dei dati ricevuti da Kaa
+	 * @return ex "humidity,temperature"
+	 */
+	private String getDefaultApplicationDataNames() {
+		String timeSeriesName = "";
+		KaaApplication kaaApplication;		
+		try {
+			kaaApplication = KaaApplicationRepository.getInstance().getKaaApplicationDataName();
+		} catch (Exception e) {
+			return "{\"message\": " + e.getMessage() + "}";
+		}
+		
+		for (String dataName : kaaApplication.getDataNames()) {
+			timeSeriesName += dataName + ",";
+		}
+		// remove the last ","
+		if(!timeSeriesName.isEmpty())
+			timeSeriesName = timeSeriesName.substring(0, timeSeriesName.length() - 1);
+		
+		return timeSeriesName;
+	}
 	
 	/***
 	 * Funzione per gestire la chiamata all'indirizzo /WearSensor/api/kaa/values
@@ -99,8 +113,8 @@ public class HandleAPICalls {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllEndpointsData() {
 		
-		String timeSeriesName = this.getApplicationDataNames();
-		
+		String timeSeriesName = this.getDefaultApplicationDataNames();
+				
 		// by default i am returning the last 24 hours data
 		Date toDate = new Date(System.currentTimeMillis());
 		Date fromDate = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
@@ -129,7 +143,7 @@ public class HandleAPICalls {
 		
 		//by default i am returning all the possible values		
 		if(timeSeriesName == null || timeSeriesName.isEmpty())
-			timeSeriesName = this.getApplicationDataNames();
+			timeSeriesName = this.getDefaultApplicationDataNames();
 		
 		// by default i am returning the last 24 hours data
 		Date fDate;

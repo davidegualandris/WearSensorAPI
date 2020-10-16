@@ -1,4 +1,4 @@
-package com.example.lapuile.wearsensor.formatters;
+package com.example.lapuile.wearsensor.library.formatters;
 
 import java.util.List;
 
