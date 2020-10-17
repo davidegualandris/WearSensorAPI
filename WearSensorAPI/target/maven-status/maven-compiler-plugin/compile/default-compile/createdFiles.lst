@@ -1,0 +1,4 @@
+com\example\lapuile\wearsensor\repositories\KaaEndpointRepository.class
+com\example\lapuile\wearsensor\handlers\HandleAPICalls.class
+com\example\lapuile\wearsensor\utils\Constants.class
+com\example\lapuile\wearsensor\repositories\KaaApplicationRepository.class
