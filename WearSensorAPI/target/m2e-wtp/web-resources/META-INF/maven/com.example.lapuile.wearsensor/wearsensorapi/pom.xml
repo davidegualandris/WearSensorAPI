@@ -50,23 +50,34 @@
         <artifactId>htrace-core</artifactId>
         <version>3.1.0-incubating</version>
     </dependency>
-	<!-- JAX-RS -->
+	<!-- JAX-RS 
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
             <version>${jaxrs.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- Jersey 2.19 -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
             <version>${jersey2.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
+		<dependency>
+		    <groupId>org.glassfish.jersey.media</groupId>
+		    <artifactId>jersey-media-json-jackson</artifactId>
+		    <version>2.19</version>
+		</dependency>
         <dependency>
+		    <groupId>org.glassfish.jersey.media</groupId>
+		    <artifactId>jersey-media-multipart</artifactId>
+		    <version>2.19</version>
+		</dependency>
+        <!-- <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
             <version>${jersey2.version}</version>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
@@ -78,6 +89,19 @@
 		    <version>3.1.0</version>
 		    <scope>provided</scope>
 		</dependency>
+		<!--  <dependency>
+		    <groupId>com.sun.jersey</groupId>
+		    <artifactId>jersey-server</artifactId>
+		    <version>1.8</version>
+		</dependency> -->
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>3.1.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		
 		
   </dependencies>
 
