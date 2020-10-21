@@ -47,7 +47,7 @@ public class KaaEndpointsValuesFormatter {
 	 * @return Lista dei KaaEndpoint formattata in CSV
 	 */
     public static String KaaEndpointsValuesToCSV(List<KaaEndpoint> kaaEndpoints){
-        String formatted = "endpointID, dataName, timestamp, value";
+        String formatted = "endpointID, dataName, timestamp, values";
         for (int i = 0; i < kaaEndpoints.size(); i++) {
             formatted += kaaEndpoints.get(i).toCSV();
         }

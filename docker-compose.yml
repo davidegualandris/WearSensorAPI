@@ -1,0 +1,10 @@
+version: '3.2'
+
+services:
+  tomcat-wearsensorapi:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    image: wearsensorapi:0.1
+    ports:
+        - "80:8080"

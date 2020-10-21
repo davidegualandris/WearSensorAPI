@@ -36,10 +36,13 @@ public class KaaEndpointRepository {
     }
 
     public List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName, String endpointId,
-    		String fromDate, String toDate, String includeTime, String sort) throws Exception
-    {    	
+    		String fromDate, String toDate, String includeTime, String sort, long samplePeriod)
+    				throws Exception{    	
         // List to be returned
         List<KaaEndpoint> kaaEndpointsFinal = new ArrayList<>();
+        
+        //Value to keep track of the sample period
+        long lastSampled = 0 - samplePeriod;
         
         // Try-catch to avoid "nullpointerexception"
         try {
@@ -145,10 +148,18 @@ public class KaaEndpointRepository {
                                     	String dateString = kaaValueJson.get("timestamp").toString();
                                     	timestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                                     			.parse(dateString);
-                                    }                                    
+                                    }                          
+                                    
+                                    // I want to sample the first one
+                                    if(x == 0)
+                                    	lastSampled = timestamp.getTime() - samplePeriod;
 
-                                    KaaValue kaaValue = new KaaValue(timestamp, actualValue);
-                                    kaaValues.add(kaaValue);
+                                    // Check the sampling period
+                                    if (timestamp.getTime() - lastSampled >= samplePeriod) {
+                                    	lastSampled += samplePeriod;
+	                                    KaaValue kaaValue = new KaaValue(timestamp, actualValue);
+	                                    kaaValues.add(kaaValue);
+                                    }
                                 }
 
                                 // Update the KaaValue we already got

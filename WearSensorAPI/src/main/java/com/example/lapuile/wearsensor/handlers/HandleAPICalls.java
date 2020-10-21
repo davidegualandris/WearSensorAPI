@@ -52,10 +52,11 @@ public class HandleAPICalls {
 	 * @param includeTime definisce se fromDate e toDate sono "inclusive" [from, to, both, none]
 	 * @param sort ordinamento dei dati [ASC, DESC]
 	 * @param format JSON, CSV o XML
+	 * @param periodSample Il periodo di campionamento dei dati
 	 * @return L'output nel formato desiderato
 	 */
 	private String getFormattedDataFromKaa(String timeSeriesName, String endpointId, Date fromDate,
-			Date toDate, String includeTime, String sort, String format) {		
+			Date toDate, String includeTime, String sort, String format, long periodSample) {		
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		
@@ -64,7 +65,7 @@ public class HandleAPICalls {
 		List<KaaEndpoint> kaaEndpoints;
 		try {
 			kaaEndpoints = KaaEndpointRepository.getInstance().getKaaEndpointsData(timeSeriesName, endpointId,
-					sdf.format(fromDate), sdf.format(toDate), includeTime, sort);
+					sdf.format(fromDate), sdf.format(toDate), includeTime, sort, periodSample);
 		} catch (Exception e) {
 			return "{\"message\": \"" + e.getMessage() + "\"}";
 		}
@@ -119,7 +120,7 @@ public class HandleAPICalls {
 		Date toDate = new Date(System.currentTimeMillis());
 		Date fromDate = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
 				
-		return this.getFormattedDataFromKaa(timeSeriesName, "", fromDate, toDate, "both", "ASC", "JSON");
+		return this.getFormattedDataFromKaa(timeSeriesName, "", fromDate, toDate, "both", "ASC", "JSON", 1000);
 	}
 	
 	/**
@@ -131,15 +132,17 @@ public class HandleAPICalls {
 	 * @param includeTime definisce se fromDate e toDate sono "inclusive" [from, to, both, none] (opzionale, none di default)
 	 * @param sort ordinamento dei dati [ASC, DESC] (opzionale, ASC di default)
 	 * @param format JSON, CSV o XML (opzionale, JSON di default)
+	 * @param periodSample Il periodo di campionamento dei dati
 	 * @return L'output nel formato desiderato filtrato dai parametri specificati
 	 */
 	@GET
 	@Path("data")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String getEndpointData(@QueryParam("endpointId") String endpointId,
-			@QueryParam("timeSeriesName") String timeSeriesName, @QueryParam("fromDate") Long fromDate,
-			@QueryParam("toDate") Long toDate, @QueryParam("includeTime") String includeTime,
-			@QueryParam("sort") String sort, @QueryParam("format") String format) {
+			@QueryParam("timeSeriesName") String timeSeriesName, @QueryParam("fromDate") long fromDate,
+			@QueryParam("toDate") long toDate, @QueryParam("includeTime") String includeTime,
+			@QueryParam("sort") String sort, @QueryParam("format") String format,
+			@QueryParam("periodSample") long periodSample) {
 		
 		//by default i am returning all the possible values		
 		if(timeSeriesName == null || timeSeriesName.isEmpty())
@@ -148,20 +151,23 @@ public class HandleAPICalls {
 		// by default i am returning the last 24 hours data
 		Date fDate;
 		try {
-			fDate = new Date(fromDate*1000);
+			fDate = new Date(fromDate);
 		}catch(Exception e){
-			fDate = new Date(System.currentTimeMillis());
+			fDate = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
 		}
 		
 		Date tDate;
 		try {
-			tDate = new Date(toDate*1000);
+			tDate = new Date(toDate);
 		}catch(Exception e){
-			tDate = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+			tDate = new Date(System.currentTimeMillis());
 		}		
 		
+		if(periodSample < 1000)
+			periodSample = 1000;
+		
 		return this.getFormattedDataFromKaa(timeSeriesName, endpointId, fDate,
-				tDate, includeTime, sort, format);
+				tDate, includeTime, sort, format, periodSample);
 	}
 	
 }
