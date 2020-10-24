@@ -14,7 +14,7 @@ public class KaaEndpointsValuesFormatter {
 	 * @param kaaEndpoints List dei KaaEndpoint
 	 * @return Lista dei KaaEndpoint formattata in JSON
 	 */
-    public static String KaaEndpointsValuesToJson(List<KaaEndpoint> kaaEndpoints){
+    public static String kaaEndpointsValuesToJson(List<KaaEndpoint> kaaEndpoints){
         String formatted = "{\"endpoints\":[";
         for (int i = 0; i < kaaEndpoints.size(); i++) {
             formatted += kaaEndpoints.get(i).toJson() + ",";
@@ -32,7 +32,7 @@ public class KaaEndpointsValuesFormatter {
 	 * @param kaaEndpoints List dei KaaEndpoint
 	 * @return Lista dei KaaEndpoint formattata in XML
 	 */
-    public static String KaaEndpointsValuesToXML(List<KaaEndpoint> kaaEndpoints){
+    public static String kaaEndpointsValuesToXML(List<KaaEndpoint> kaaEndpoints){
         String formatted = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><endpoints>";
         for (int i = 0; i < kaaEndpoints.size(); i++) {
             formatted +=  kaaEndpoints.get(i).toXML();
@@ -46,7 +46,7 @@ public class KaaEndpointsValuesFormatter {
 	 * @param kaaEndpoints List dei KaaEndpoint
 	 * @return Lista dei KaaEndpoint formattata in CSV
 	 */
-    public static String KaaEndpointsValuesToCSV(List<KaaEndpoint> kaaEndpoints){
+    public static String kaaEndpointsValuesToCSV(List<KaaEndpoint> kaaEndpoints){
         String formatted = "endpointID, dataName, timestamp, values";
         for (int i = 0; i < kaaEndpoints.size(); i++) {
             formatted += kaaEndpoints.get(i).toCSV();
