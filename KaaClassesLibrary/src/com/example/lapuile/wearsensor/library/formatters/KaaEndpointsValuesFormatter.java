@@ -5,14 +5,14 @@ import java.util.List;
 import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
 
 /**
- * Classe per formattare nel formato desiderato una lista di KaaEndpoint 
+ * Class to format a KaaEndpoint list in the desired format 
  */
 public class KaaEndpointsValuesFormatter {
 
 	/**
-	 * Formattazione in JSON
-	 * @param kaaEndpoints List dei KaaEndpoint
-	 * @return Lista dei KaaEndpoint formattata in JSON
+	 * Formatting in JSON
+	 * @param kaaEndpoints KaaEndpoint list
+	 * @return List of KaaEndpoints formatted in JSON
 	 */
     public static String kaaEndpointsValuesToJson(List<KaaEndpoint> kaaEndpoints){
         String formatted = "{\"endpoints\":[";
@@ -28,9 +28,9 @@ public class KaaEndpointsValuesFormatter {
     }
 
     /**
-	 * Formattazione in XML
-	 * @param kaaEndpoints List dei KaaEndpoint
-	 * @return Lista dei KaaEndpoint formattata in XML
+	 * Formatting in XML
+	 * @param kaaEndpoints KaaEndpoint list
+	 * @return List of KaaEndpoints formatted in XML
 	 */
     public static String kaaEndpointsValuesToXML(List<KaaEndpoint> kaaEndpoints){
         String formatted = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><endpoints>";
@@ -42,9 +42,9 @@ public class KaaEndpointsValuesFormatter {
     }
 
     /**
-	 * Formattazione in CSV
-	 * @param kaaEndpoints List dei KaaEndpoint
-	 * @return Lista dei KaaEndpoint formattata in CSV
+	 * Formatting in CSV
+	 * @param kaaEndpoints KaaEndpoint list
+	 * @return List of KaaEndpoints formatted in CSV
 	 */
     public static String kaaEndpointsValuesToCSV(List<KaaEndpoint> kaaEndpoints){
         String formatted = "endpointID, dataName, timestamp, values";

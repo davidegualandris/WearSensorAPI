@@ -2,15 +2,18 @@ package com.example.lapuile.wearsensor.library.models;
 
 import java.util.List;
 
+/**
+ * Class to represent a KaaApplication
+ */
 public class KaaApplication {
 
 	private String applicationName; // example: btngtro547tsntf25rtg
-	private List<String> dataNames; // example: {"name": "auto~humidity", "values": ["value"]}
+	private List<KaaEndpointConfiguration> endpoints;
 	
-	public KaaApplication(String applicationName, List<String> dataNames) {
+	public KaaApplication(String applicationName, List<KaaEndpointConfiguration> endpoints) {
 		super();
 		this.applicationName = applicationName;
-		this.dataNames = dataNames;
+		this.endpoints = endpoints;
 	}
 	
 	public String getApplicationName() {
@@ -19,40 +22,52 @@ public class KaaApplication {
 	public void setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
 	}
-	public List<String> getDataNames() {
-		return dataNames;
+	public List<KaaEndpointConfiguration> getEndpoints() {
+		return endpoints;
 	}
-	public void setDataNames(List<String> dataNames) {
-		this.dataNames = dataNames;
+	public void setEndpoints(List<KaaEndpointConfiguration> endpoints) {
+		this.endpoints = endpoints;
 	}
 	
 	@Override
 	public String toString() {
-		return "KaaApplication [applicationName=" + applicationName + ", dataNames=" + dataNames + "]";
-	}    
+		return "KaaApplication [applicationName=" + applicationName + ", endpoints=" + endpoints + "]";
+	}
 	
+	/*
+	 * KaaApplication formatted in JSON
+	 */
 	public String toJSON() {
-		String json = "{\"applicationName\":\"" + applicationName +"\",\"dataNames\":[";
-		for(int i=0;i<dataNames.size();i++)		
-			json+="\""+dataNames.get(i)+"\",";
+		String json = "{\"applicationName\":\""+applicationName+"\",\"endpoints\":[";
+		for(int i=0;i<endpoints.size();i++)		
+			json+=endpoints.get(i).toJSON()+",";
 		//remove last comma
 		if(json.charAt(json.length()-1) == ',')
 			json = json.substring(0, json.length() - 1);
 		return json += "]}";
 	}
 	
+	/*
+	 * KaaApplication formatted in XML
+	 */
 	public String toXML(){
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
-        xml += "<application applicationName=\""+this.applicationName+"\">";
-        for(int i=0;i<dataNames.size();i++)		
-			xml+="<dataName>"+dataNames.get(i)+"</dataName>";
+        xml += "<application applicationName=\""+applicationName+"\">";
+        for(int i=0;i<endpoints.size();i++)		
+			xml+=endpoints.get(i).toXML();
         return xml + "</application>";
     }
 
+	/*
+	 * KaaApplication formatted in CSV
+	 */
     public String toCSV(){
-        String csv = "applicationName,dataName";
-        for(int i=0;i<dataNames.size();i++)		
-        	csv += "\n" + this.applicationName + "," + dataNames.get(i);
+        String csv = "applicationName,endpointId,dataName";
+        for(int i=0;i<endpoints.size();i++) {
+        	String[] endpointCsvSplitted = endpoints.get(i).toCSV().split("\n");
+        	for(int x=0;x<endpointCsvSplitted.length;x++)
+        		csv += "\n" + applicationName + "," + endpointCsvSplitted[x];
+        }
         return csv;
     }
 
