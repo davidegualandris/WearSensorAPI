@@ -21,6 +21,11 @@ public class KaaValueMulti implements KaaValue{
 	private Date timestamp;
     private Map<String, Object> values;
 
+    public KaaValueMulti() {
+		this.timestamp = new Date();
+		this.values = new HashMap<String, Object>();
+	}
+    
     public KaaValueMulti(Date timestamp, Map<String, Object> values) {
 		this.timestamp = timestamp;
 		this.values = values;
@@ -32,11 +37,11 @@ public class KaaValueMulti implements KaaValue{
      */
     private void assignValuesFromJson(JSONObject values) {
     	// i am sure that inside "values" there is a list of value
-    	Map<String, Object> valuesMap = new HashMap<>();
+    	this.values = new HashMap<>();
     	Iterator<String> keys = values.keys();
     	while(keys.hasNext()) {
     	    String key = keys.next();
-    	    valuesMap.put(key, values.get(key));
+    	    this.values.put(key, values.get(key));
     	}
     }
     
@@ -121,24 +126,10 @@ public class KaaValueMulti implements KaaValue{
      * KaaValue formatted in a Kaa-like JSON
      * @param valueName Name of the key that this instance is representing
      */
-	public String toKaaJson(String valueName) {
-    	/*String jsonString = "{";
-        jsonString += "\"timestamp\":\""+Constants.KAA_EPTS_API_DATE_FORMAT.format(timestamp)+"\",";
-        jsonString += "\"values\":{";
-        for(String key : values.keySet()) {
-        	jsonString += "\"" + key + "\":";
-        	jsonString += values.get(key) + ",";
-        }
-        //remove last comma
-        if(jsonString.charAt(jsonString.length() - 1) == ',')
-            jsonString = jsonString.substring(0, jsonString.length() - 1);
-        return jsonString + "}}";*/
-		
-		String jsonString = "{\"timestamp\": \"";
-    	//Json += Constants.KAA_EPTS_API_DATE_FORMAT.format(timestamp);
+	public String toKaaJson(String valueName) {		
+		String jsonString = "{\"timestamp\": ";
 		jsonString += timestamp.getTime();
-    	//Json += "\",\"values\": {\"value\": " + value + "}}";
-		jsonString += "\",\""+valueName+"\":[";
+		jsonString += ",\""+valueName.replace(" ","")+"\":{";
     	for(String key : values.keySet()) {
         	jsonString += "\"" + key + "\":";
         	jsonString += values.get(key) + ",";
@@ -146,7 +137,7 @@ public class KaaValueMulti implements KaaValue{
     	//remove last comma
         if(jsonString.charAt(jsonString.length() - 1) == ',')
             jsonString = jsonString.substring(0, jsonString.length() - 1);
-        jsonString += "]}";
+        jsonString += "}}";
     	return jsonString;
     }
 

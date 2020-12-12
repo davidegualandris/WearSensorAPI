@@ -1,5 +1,6 @@
 package com.example.lapuile.wearsensor.library.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,8 +11,12 @@ public class KaaApplication {
 	private String applicationName; // example: btngtro547tsntf25rtg
 	private List<KaaEndpointConfiguration> endpoints;
 	
+	public KaaApplication() {
+		this.applicationName = null;
+		this.endpoints = new ArrayList<KaaEndpointConfiguration>();
+	}
+	
 	public KaaApplication(String applicationName, List<KaaEndpointConfiguration> endpoints) {
-		super();
 		this.applicationName = applicationName;
 		this.endpoints = endpoints;
 	}

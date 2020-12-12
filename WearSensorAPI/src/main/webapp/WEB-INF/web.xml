@@ -18,7 +18,7 @@
    
     <servlet-mapping>
         <servlet-name>jersey-serlvet</servlet-name>
-        <url-pattern>/kaa/esp/*</url-pattern>
+        <url-pattern>/kaa/*</url-pattern>
     </servlet-mapping>
       
 </web-app>

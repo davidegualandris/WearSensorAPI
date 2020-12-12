@@ -16,7 +16,6 @@ public class KaaEndpointConfiguration {
 	private List<String> dataNames; // example: {"auto~humidity", "auto~temperature"}
 
 	public KaaEndpointConfiguration(){
-		super();
 		this.endpointId = "";
 		this.dataNames = new ArrayList<String>();
 	}

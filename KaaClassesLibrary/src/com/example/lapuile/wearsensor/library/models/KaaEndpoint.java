@@ -21,6 +21,11 @@ public class KaaEndpoint {
 	private String endpointId;
     private Map<String, List<KaaValue>> values;
     
+    public KaaEndpoint() {
+        this.endpointId = null;
+        this.values = new HashMap<String, List<KaaValue>>();
+    }
+    
     public KaaEndpoint(String endpointId, Map<String, List<KaaValue>> values) {
         this.endpointId = endpointId;
         this.values = values;
@@ -166,6 +171,31 @@ public class KaaEndpoint {
         	jsonString = jsonString.substring(0, jsonString.length() - 1);*/
         jsonString += "]";
         return jsonString;
+    }
+    
+    /*
+     * Since Kaa is not working very well when you send to the platform multiple data, this functions allow us to
+     * have a list of json to be sent separately
+     */
+    public List<String> getMqttJsonList() throws ParseException{
+    	List<String> values = new ArrayList<String>();
+		String json = toKaaJson();
+		//remove first [ and last ]
+    	json = json.substring(1,json.length()-1);
+    	//return new ArrayList<>(Arrays.asList(json.split(",")));
+    	String pattern = "},{";
+    	int index = json.indexOf(pattern);
+    	int oldIndex = -2;
+    	String value = null;
+    	while (index >= 0) {
+    		value = json.substring(oldIndex+2, index+1);
+    		values.add(value);
+    		oldIndex = index;
+    	    index = json.indexOf(pattern, index + 1);
+    	}
+    	value = json.substring(oldIndex+2, json.length());    
+    	values.add(value);
+    	return values;
     }
     
     /*

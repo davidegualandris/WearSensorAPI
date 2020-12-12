@@ -17,6 +17,11 @@ public class KaaValueSingle implements KaaValue{
 	private Date timestamp;
     private Object value;
     
+    public KaaValueSingle() {
+        this.timestamp = new Date();
+        this.value = null;
+    }
+    
     public KaaValueSingle(Date timestamp, Object value) {
         this.timestamp = timestamp;
         this.value = value;
@@ -113,11 +118,9 @@ public class KaaValueSingle implements KaaValue{
      * @param valueName Name of the key that this instance is representing
      */
     public String toKaaJson(String valueName) throws ParseException {
-    	String Json = "{\"timestamp\": \"";
-    	//Json += Constants.KAA_EPTS_API_DATE_FORMAT.format(timestamp);
+    	String Json = "{\"timestamp\": ";
     	Json += timestamp.getTime();
-    	//Json += "\",\"values\": {\"value\": " + value + "}}";
-    	Json += "\",\""+valueName+"\":" + value + "}";
+    	Json += ",\""+valueName.replace(" ","")+"\":" + value + "}";
     	return Json;
     }
 
