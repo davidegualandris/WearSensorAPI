@@ -1,7 +1,6 @@
 package com.example.lapuile.wearsensor.handlers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -30,16 +29,19 @@ import com.example.lapuile.wearsensor.senders.KaaEndpointSenders;
 
 /**
  * Class that allows you to directly respond to calls to the API defined in this project
- * /time-series/config/{endpointId} to get the "dataNames" of the specified endpoints
+ * /time-series/config/{endpointIds} to get the "dataNames" of the specified endpoints
+ * /time-series/config/{endpointId}&{dataName} to check the availability of the sensor "dataName" in the specified endpoint 
  * /time-series/last to get all the data of the last 24 hours in JSON format
  * /time-series/data/{params} to get data with custom parameters
+ * /time-series/data/{data} to store the specified data in the platform
  */
 @Path("/time-series")
 public class HandleAPICalls {
 
 	/**
-	 * Support function to "retrieve" the names of the values that the Kaa application is receiving
-	 * @param endpointID EndpointIDs whose data you want to retrieve
+	 * Function to "retrieve" the names of the values that the Kaa application is receiving
+	 * @param endpointID EndpointIDs whose data you want to retrieve (endpointIds separated with ,)
+	 * @param dataName sensor name to check for availability within the endpointId
 	 * @return JSON mappable with the KaaApplication model
 	 */
 	@GET
@@ -48,7 +50,7 @@ public class HandleAPICalls {
 	public String getApplicationConfiguration(@QueryParam("endpointId") String endpointId) {
 		KaaApplication kaaApplication;
 		try {
-			kaaApplication = KaaApplicationRepository.getInstance().getKaaApplicationDataNames(endpointId);
+			kaaApplication = KaaApplicationRepository.getKaaApplicationDataNames(endpointId);
 		} catch (Exception e) {
 			return "{\"message\": " + e.getMessage() + "}";
 		}
@@ -56,7 +58,7 @@ public class HandleAPICalls {
 	}
 
 	/**
-	 * Function that returns the data obtained from Kaa based on the parameters specified below
+	 * Function that returns the data obtained from Kaa filtered on the parameters specified below
 	 * @param kaaEndpointConfigurations List of KaaEndpointConfiguration that tells the API which data retrieve for which endpoint
 	 * @param fromDate       "Date" from which to retrieve the data
 	 * @param toDate         "Date" up to which to recover the data
@@ -71,7 +73,7 @@ public class HandleAPICalls {
 
 		List<KaaEndpoint> kaaEndpoints;
 		try {
-			kaaEndpoints = KaaEndpointRepository.getInstance().getKaaEndpointsData(kaaEndpointConfigurations,
+			kaaEndpoints = KaaEndpointRepository.getKaaEndpointsData(kaaEndpointConfigurations,
 							Constants.KAA_EPTS_API_DATE_FORMAT.format(fromDate), Constants.KAA_EPTS_API_DATE_FORMAT.format(toDate),
 							includeTime, sort, periodSample);
 		} catch (Exception e) {
@@ -98,7 +100,7 @@ public class HandleAPICalls {
 	private List<KaaEndpointConfiguration> getDefaultApplicationConfiguration() throws Exception {
 		KaaApplication kaaApplication;
 		try {
-			kaaApplication = KaaApplicationRepository.getInstance().getKaaApplicationDataNames(null); 
+			kaaApplication = KaaApplicationRepository.getKaaApplicationDataNames(null); 
 		} catch (Exception e) {
 			throw new Exception("{\"message\": " + e.getMessage() + "}");
 		}
@@ -106,7 +108,7 @@ public class HandleAPICalls {
 	}
 
 	/**
-	 * Function to handle the call to the address /WearSensorAPI/kaa/values
+	 * Function to get all the data of the last 24 hours in JSON format
 	 * @return All data of all endpoints from the last 24 hours in JSON format
 	 * @throws Exception 
 	 */	
@@ -129,7 +131,7 @@ public class HandleAPICalls {
 	}
 	
 	/**
-	 * Function to handle the call to the address /WearSensorAPI/kaa/data?{params}
+	 * Function to get data from Kaa with custom parameters
 	 * @param kaaEndpointConfigurations encoded JSON (KaaEndpointsConfigurationsFormatter.KaaEndpointConfigurationsToJSON) that tells the API which data retrieve for which endpoint
 	 * @param fromDate       "Date" from which to retrieve the data
 	 * @param toDate         "Date" up to which to recover the data
@@ -177,12 +179,11 @@ public class HandleAPICalls {
 	}
 	
 	/**
-	 * 
-	 * @param data
-	 * @return
+	 * Function to store the specified data in the platform 
+	 * @param data JSON obtained from the function KaaEndpoint.toJson()
+	 * @return HTTP response representing the result of the operation (if operation completed successfully OK / 200)
 	 * @throws MqttException 
 	 * @throws ParseException 
-	 * @throws URISyntaxException
 	 */
 	@POST
 	@Path("data")

@@ -28,21 +28,10 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+/**
+ * Class used to ask Kaa about endpoint values
+ */
 public class KaaEndpointRepository {
-	
-	private static KaaEndpointRepository instance;
-
-	private String baseURL;
-	
-    private KaaEndpointRepository(){
-    	baseURL = Constants.KAA_EPTS_API_BASE_URL+"applications/"+Constants.KAA_APPLICATION_NAME+"/time-series/data";
-    }
-
-    public static synchronized KaaEndpointRepository getInstance(){
-        if (instance==null)
-            instance = new KaaEndpointRepository();
-        return instance;
-    }
 
     /**
      * Function to parse the JSON returned from the KAA EPTS API to a List of KaaEndpoints
@@ -51,7 +40,7 @@ public class KaaEndpointRepository {
      * @return List of KaaEndpoints parsed from a JSON
      * @throws Exception 
      */
-    private List<KaaEndpoint> getKaaEndpointsFromJSON(String jsonString, Long samplePeriod) throws Exception{
+    private static List<KaaEndpoint> getKaaEndpointsFromJSON(String jsonString, Long samplePeriod) throws Exception{
     	
     	// List to be returned
         List<KaaEndpoint> kaaEndpoints = new ArrayList<>();
@@ -150,7 +139,7 @@ public class KaaEndpointRepository {
      * @return List of KaaEndpoints (without values) parsed from a JSON
      * @throws ParseException 
      */
-    private List<KaaEndpoint> getKaaEndpointsConfigurationFromJSON(String jsonString) throws ParseException{
+    private static List<KaaEndpoint> getKaaEndpointsConfigurationFromJSON(String jsonString) throws ParseException{
     	
     	// List to be returned
         List<KaaEndpoint> kaaEndpoints = new ArrayList<>();
@@ -213,6 +202,7 @@ public class KaaEndpointRepository {
 	 * @param sort           data sorting [ASC, DESC]
 	 * @param samplePeriod   The data sampling period
 	 * @return List of KaaEndpoint
+	 * @throws Exception
 	 */
     public List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName, String fromDate, String toDate,
     												String includeTime, String sort, long samplePeriod)
@@ -230,7 +220,7 @@ public class KaaEndpointRepository {
 		}
         
         // default string
-        String APIRequest = baseURL + "?timeSeriesName="+
+        String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL + "?timeSeriesName="+
         					timeSeriesName+"&fromDate="+fromDate+"&toDate="+toDate;
         
         if(includeTime != null && !includeTime.isEmpty())
@@ -300,8 +290,9 @@ public class KaaEndpointRepository {
 	 * Function that returns, for every endpoint, the data obtained from Kaa EPTS API without values. Used to get the dataNamesof every endpoint
 	 * @param timeSeriesName dataNames that you want to retrieve for every end(ex. "temperature,humidity")
 	 * @return List of KaaEndpoint without any values inside
+	 * @throws Exception
 	 */
-    public List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName) throws Exception{
+    public static List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName) throws Exception{
 		
     	// List to be returned
         List<KaaEndpoint> kaaEndpointsFinal = new ArrayList<>();
@@ -322,7 +313,7 @@ public class KaaEndpointRepository {
         String toDate = Constants.KAA_EPTS_API_DATE_FORMAT.format(new Date(tDate));
         
         // default string
-        String APIRequest = baseURL + "?timeSeriesName="+
+        String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL + "?timeSeriesName="+
         					timeSeriesName+"&fromDate="+fromDate+"&toDate="+toDate;
         
         // Create URL
@@ -379,9 +370,7 @@ public class KaaEndpointRepository {
         }
 
         return kaaEndpointsFinal;	
-    }
-    
-    
+    }    
     
     /**
 	 * Function that returns the data obtained from Kaa EPTS API based on the parameters specified below
@@ -392,8 +381,9 @@ public class KaaEndpointRepository {
 	 * @param sort           data sorting [ASC, DESC]
 	 * @param samplePeriod   The data sampling period
 	 * @return List of KaaEndpoint
+	 * @throws Exception
 	 */
-    public List<KaaEndpoint> getKaaEndpointsData(List<KaaEndpointConfiguration> kaaEndpointConfigurations,
+    public static List<KaaEndpoint> getKaaEndpointsData(List<KaaEndpointConfiguration> kaaEndpointConfigurations,
     		String fromDate, String toDate, String includeTime, String sort, long samplePeriod)
     				throws Exception{    	
         // List to be returned
@@ -405,7 +395,7 @@ public class KaaEndpointRepository {
         	KaaEndpointConfiguration endpointConfig = kaaEndpointConfigurations.get(i);
         	
         	// default string
-            String APIRequest = baseURL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
+            String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
             					+"&endpointId="+endpointConfig.getendpointId()+"&fromDate="
             					+fromDate+"&toDate="+toDate;
             
@@ -479,8 +469,9 @@ public class KaaEndpointRepository {
 	 * Function that returns, for the specified endpoints, the data obtained from Kaa EPTS API without values. Used to get the dataNames of selected endpoint
 	 * @param kaaEndpointConfigurations List of KaaEndpointConfiguration that tells the API which data retrieve for which endpoint
 	 * @return List of KaaEndpoint without any values inside
+	 * @throws Exception
 	 */
-    public List<KaaEndpoint> getKaaEndpointsData(List<KaaEndpointConfiguration> kaaEndpointConfigurations) throws Exception{
+    public static List<KaaEndpoint> getKaaEndpointsData(List<KaaEndpointConfiguration> kaaEndpointConfigurations) throws Exception{
 		
     	// From 1970
     	Long fDate = 0L;
@@ -498,7 +489,7 @@ public class KaaEndpointRepository {
         	KaaEndpointConfiguration endpointConfig = kaaEndpointConfigurations.get(i);
         	
         	// default string
-            String APIRequest = baseURL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
+            String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
             					+"&endpointId="+endpointConfig.getendpointId()+"&fromDate="
             					+fromDate+"&toDate="+toDate;
             

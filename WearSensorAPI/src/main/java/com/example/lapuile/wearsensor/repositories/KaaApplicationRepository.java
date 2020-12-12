@@ -20,33 +20,23 @@ import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
 import com.example.lapuile.wearsensor.library.models.KaaEndpointConfiguration;
 import com.example.lapuile.wearsensor.utils.Constants;
 
+/**
+ * Class used to ask Kaa about application configuration
+ */
 public class KaaApplicationRepository {
-	private static KaaApplicationRepository instance;
-	
-    private KaaApplicationRepository() {}
-
-    private static String baseUrl;
-    
-    public static synchronized KaaApplicationRepository getInstance(){
-        if (instance==null) {
-        	baseUrl = Constants.KAA_EPTS_API_BASE_URL + "time-series/config";
-        	instance = new KaaApplicationRepository();
-        }            
-        return instance;
-    }
     
     /**
      * Function that query the KAA EPTS API to know about all the dataNames
      * @return List of all available data names
      * @throws Exception
      */
-    private List<String> getAllKaaApplicationDataNames() throws Exception
+    private static List<String> getAllKaaApplicationDataNames() throws Exception
     {    	
     	List<String> dataNames = new ArrayList<>();
     	// Create URL
         URL kaaApiUrl = null;
         try {
-            kaaApiUrl = new URL(baseUrl);
+            kaaApiUrl = new URL(Constants.APPLICATION_REPOSITORY_BASE_URL);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             throw new Exception("Malformed URL");
@@ -113,11 +103,11 @@ public class KaaApplicationRepository {
 
     /**
     * Function to return the KaaApplication configurations of the specified endpoints (all possible configurations if equals to "")
-    * @param endpointId Endpoints whose configuration I want to retrieve separated from ,
+    * @param endpointId Endpoints whose configuration I want to retrieve separated with ,
     * @return Instance of KaaApplication containing the requested configuration
     * @throws Exception
     */
-    public KaaApplication getKaaApplicationDataNames(String endpointId) throws Exception{
+    public static KaaApplication getKaaApplicationDataNames(String endpointId) throws Exception{
     	
     	List<KaaEndpoint> kaaEndPoints;
     	
@@ -127,7 +117,7 @@ public class KaaApplicationRepository {
     	// If he's asking for every data of every endpoint
     	if( endpointId == null || endpointId.isEmpty() ){
     		
-    		kaaEndPoints = KaaEndpointRepository.getInstance().getKaaEndpointsData(String.join(",", dataNames));
+    		kaaEndPoints = KaaEndpointRepository.getKaaEndpointsData(String.join(",", dataNames));
     		
     	}else{
   
@@ -139,7 +129,7 @@ public class KaaApplicationRepository {
     			kaaEndpointConfigurations.add(new KaaEndpointConfiguration(endpoints[i], dataNames));
     		
     		// I am going to query the EPTS API to know about the configurations of requested endpoints
-    		kaaEndPoints = KaaEndpointRepository.getInstance().getKaaEndpointsData(kaaEndpointConfigurations);
+    		kaaEndPoints = KaaEndpointRepository.getKaaEndpointsData(kaaEndpointConfigurations);
     	} 
     	
     	// Then i am formatting the result
@@ -151,7 +141,7 @@ public class KaaApplicationRepository {
      * @param kaaEndPoints KaaEndpoints from which retrieve the configurations
      * @return KaaApplication with the correct configuration
      */
-    private KaaApplication convertKaaEndpointToKaaApplication(List<KaaEndpoint> kaaEndpoints) {
+    private static KaaApplication convertKaaEndpointToKaaApplication(List<KaaEndpoint> kaaEndpoints) {
     	List<KaaEndpointConfiguration> config = new ArrayList<>();
     	for (KaaEndpoint endpoint : kaaEndpoints) {
     		config.add(new KaaEndpointConfiguration(endpoint.getEndpointId(), endpoint.getValuesDataNames()));

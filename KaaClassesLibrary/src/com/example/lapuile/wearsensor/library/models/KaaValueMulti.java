@@ -21,11 +21,19 @@ public class KaaValueMulti implements KaaValue{
 	private Date timestamp;
     private Map<String, Object> values;
 
+    /**
+	 * Void constructor
+	 */
     public KaaValueMulti() {
 		this.timestamp = new Date();
 		this.values = new HashMap<String, Object>();
 	}
     
+    /**
+     * Constructor to use whether you know the moment which the sensor has been queried and the the values of the sensors
+     * @param timestamp The Date representing the moment which the sensor has been queried
+     * @param values the values of the sensors
+     */
     public KaaValueMulti(Date timestamp, Map<String, Object> values) {
 		this.timestamp = timestamp;
 		this.values = values;
@@ -46,7 +54,7 @@ public class KaaValueMulti implements KaaValue{
     }
     
     /**
-     * Constructor to create an instance from a JSON
+     * Constructor to create an instance from a JSON (reverse operation than toJson or toKaaJson)
      * @param JSON JSON to be converted
      * @throws ParseException
      */
@@ -80,33 +88,58 @@ public class KaaValueMulti implements KaaValue{
     	this.assignValuesFromJson(new JSONObject(jsonValues));
     }
     
+    /**
+     * Function to get the moment which the sensor has been queried 
+     * @return the moment which the sensor has been queried
+     */
 	public Date getTimestamp() {
 		return timestamp;
 	}
 
+	/**
+     * Function to set the moment which the sensor has been queried
+     * @param timestamp the moment which the sensor has been queried
+     */
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
 
+	/**
+     * Function to get the values of the sensor
+     * @return the values of the sensor
+     */
 	public Map<String, Object> getValue() {
 		return values;
 	}
 	
+	/**
+	 * Function to get the value names of the sensor
+	 * @return the key set of the names of the values represented by the sensor
+	 */
 	public Set<String> getValueNames(){
 		return values.keySet();
 	}
 
+	/**
+     * Function to set the values of the sensor
+     * @param values the values of the sensor
+     */
 	public void setValues(Map<String, Object> values) {
 		this.values = values;
 	}
 	
+	/**
+	 * Function to get a short description of the instance
+	 * @return a short description of the instance
+	 */
 	@Override
 	public String toString() {
 		return "KaaValueMulti [timestamp=" + timestamp + ", values=" + values + "]";
 	}
 
-	/*
+	/**
 	 * KaaValue formatted in a JSON
+	 * @return the KaaValue instance formatted in a JSON
 	 */
 	public String toJson(){
         String jsonString = "{";
@@ -123,8 +156,9 @@ public class KaaValueMulti implements KaaValue{
     }
 	
 	/**
-     * KaaValue formatted in a Kaa-like JSON
-     * @param valueName Name of the key that this instance is representing
+     * KaaValue formatted in a Kaa-accepted JSON
+     * @return the KaaValue formatted in a Kaa-accepted JSON
+     * @throws ParseException
      */
 	public String toKaaJson(String valueName) {		
 		String jsonString = "{\"timestamp\": ";
@@ -141,8 +175,9 @@ public class KaaValueMulti implements KaaValue{
     	return jsonString;
     }
 
-	/*
+	/**
 	 * KaaValue formatted in a XML
+	 * @return the KaaValue instance formatted in a XML
 	 */
     public String toXML(){
         String xml = "<data>";
@@ -157,8 +192,9 @@ public class KaaValueMulti implements KaaValue{
         return xml + "</data>";
     }
 
-    /*
+    /**
 	 * KaaValue formatted in a CSV
+	 * @return the KaaValue instance formatted in a CSV
 	 */
     public String toCSV(){
     	String csv = "";

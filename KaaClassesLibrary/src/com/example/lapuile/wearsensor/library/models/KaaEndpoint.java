@@ -14,25 +14,34 @@ import com.example.lapuile.wearsensor.library.models.interfaces.KaaValue;
 
 /*
  * Class used to represent the values of a given Endpoint
- * Don't get confused with the class KaaEndpointConfiguration
+ * !!! Don't get confused with the class KaaEndpointConfiguration !!!
+ * The values variable represents the actual values collected from the endpoint
  */
 public class KaaEndpoint {
 
 	private String endpointId;
     private Map<String, List<KaaValue>> values;
     
+    /**
+	 * Void constructor
+	 */
     public KaaEndpoint() {
         this.endpointId = null;
         this.values = new HashMap<String, List<KaaValue>>();
     }
     
+    /**
+     * Construct to use whether you know the endpointId and the values collected from the endpoint
+     * @param endpointId the endpointId
+     * @param values the values collected from the endpoint
+     */
     public KaaEndpoint(String endpointId, Map<String, List<KaaValue>> values) {
         this.endpointId = endpointId;
         this.values = values;
     }
     
     /**
-     * Constructor to create an instance from a JSON
+     * Constructor to create an instance from a JSON (reverse operation than toJson)
      * @param JSON to be converted in an intance of this class
      * @throws Exception
      */
@@ -40,7 +49,6 @@ public class KaaEndpoint {
     	JSONObject obj = new JSONObject(JSON);
     	Map<String, List<KaaValue>> valuesMap = new HashMap<>();
     	
-    	// it has to consider both toKaaJson and toJson
     	if(obj.has("endpointId")) {
     		// it comes from toJson
     		this.endpointId = obj.getString("endpointId");
@@ -62,66 +70,57 @@ public class KaaEndpoint {
     			}
         		valuesMap.put(key, list);
         	}
-    	}else {
-    		// it comes from toKaaJson	
-            /*// Get the keys -> just one in our case -> the endpointId
-            Iterator<String> keys = obj.keys();
-    		while(keys.hasNext()) {
-                String endpointID = keys.next();
-                this.endpointId = endpointID;
-                if (obj.get(endpointID) instanceof JSONObject) {
-                    JSONObject valueJson = (JSONObject) obj.get(endpointID);
-                    // Get the keys -> just one in our case -> hum,temp or co2
-                    Iterator<String> dataNames = valueJson.keys();
-                    while (dataNames.hasNext()) {
-                        // Get the list of values associated with this JsonObject
-                        String dataName = dataNames.next(); // Might be temp, hum, co2 etc
-                        List<KaaValue> kaaValues = new ArrayList<>();
-                        // Convert the values in a List<KaaValue>
-                        JSONArray values = (JSONArray) valueJson.get(dataName);
-                        for (int x = 0 ; x < values.length(); x++) {
-                            // Get the object
-                            JSONObject kaaValueJson = values.getJSONObject(x);
-                        	int jsonValuesSize = kaaValueJson.getJSONObject("values").keySet().size();
-                        	KaaValue kaaValue = null;                  
-                            if(jsonValuesSize == 0) {
-                            	throw new Exception("Error while parsing the data");
-                            }else if(jsonValuesSize == 1) {
-                            	kaaValue = new KaaValueSingle(kaaValueJson.toString());
-                            }else {
-                            	kaaValue = new KaaValueMulti(kaaValueJson.toString());
-                            }
-                            kaaValues.add(kaaValue);
-                        }
-                        valuesMap.put(dataName, kaaValues);
-                    }
-                }
-            }*/
     	}
-
+    	/* TODO parse if it comes from toKaaJson
+    	 * else{}
+    	 */
     	this.values = valuesMap;
     }
 
+    /**
+     * Function to get the endpointId
+     * @return the endpointId
+     */
     public String getEndpointId() {
         return endpointId;
     }
 
+    /**
+     * Function to set the endpointId
+     * @param endpointId the endpointId
+     */
     public void setEndpointId(String endpointId) {
         this.endpointId = endpointId;
     }
 
+    /**
+     * Function to get the values collected from the endpoint
+     * @return the values collected from the endpoint
+     */
     public Map<String, List<KaaValue>> getValues(){
         return values;
     }
 
+    /**
+     * Function to set the values collected from the endpoint
+     * @param values the values collected from the endpoint
+     */
     public void setValues(Map<String, List<KaaValue>> values) {
         this.values = values;
     }
     
+    /**
+	 * Function to get the value names of the endpoint sensors
+	 * @return the key set of the value names of the endpoint sensors
+	 */
     public List<String> getValuesDataNames(){
     	return new ArrayList<String>(values.keySet());
     }
 
+    /**
+	 * Function to get a short description of the instance
+	 * @return a short description of the instance
+	 */
     @Override
     public String toString() {
         return "KaaEndpoint{" +
@@ -130,8 +129,9 @@ public class KaaEndpoint {
                 '}';
     }
 
-    /*
+    /**
 	 * KaaEndpoint formatted in JSON
+	 * @return the KaaEndpoint instance formatted in a JSON
 	 */
     public String toJson(){
         String jsonString = "{\"endpointId\":\"" + endpointId + "\",\"values\":{";
@@ -151,9 +151,11 @@ public class KaaEndpoint {
         return jsonString;
     }
     
-    /*
-	 * KaaEndpoint formatted in a Kaa-like JSON
-	 */
+    /**
+     * KaaEndpoint formatted in a Kaa-accepted JSON
+     * @return the KaaEndpoint formatted in a Kaa-accepted JSON
+     * @throws ParseException
+     */
     public String toKaaJson() throws ParseException{
         //String jsonString = "{\"" + endpointId + "\":{";
     	String jsonString = "[";
@@ -173,11 +175,12 @@ public class KaaEndpoint {
         return jsonString;
     }
     
-    /*
-     * Since Kaa is not working very well when you send to the platform multiple data, this functions allow us to
-     * have a list of json to be sent separately
+    /**
+     * Function to get a list of JSON representing the various values collected from the endpoint
+     * @return A list of JSON representing the various values collected from the endpoint
+     * @throws ParseException
      */
-    public List<String> getMqttJsonList() throws ParseException{
+    public List<String> getValuesJsonList() throws ParseException{
     	List<String> values = new ArrayList<String>();
 		String json = toKaaJson();
 		//remove first [ and last ]
@@ -198,8 +201,9 @@ public class KaaEndpoint {
     	return values;
     }
     
-    /*
+    /**
 	 * KaaEndpoint formatted in XML
+	 * @return the KaaEndpoint instance formatted in a XML
 	 */
     public String toXML(){
         String xml = "<endpoint endpointId=\""+endpointId+"\">";
@@ -212,8 +216,9 @@ public class KaaEndpoint {
         return xml + "</endpoint>";
     }
 
-    /*
+    /**
 	 * KaaEndpoint formatted in CSV
+	 * @return the KaaEndpoint instance formatted in a CSV
 	 */
     public String toCSV(){
         String csv = "endpointId,dataName,timestamp,value";

@@ -17,11 +17,19 @@ public class KaaValueSingle implements KaaValue{
 	private Date timestamp;
     private Object value;
     
+    /**
+	 * Void constructor
+	 */
     public KaaValueSingle() {
         this.timestamp = new Date();
         this.value = null;
     }
     
+    /**
+     * Constructor to use whether you know the moment which the sensor has been queried and the value of the sensor
+     * @param timestamp The Date representing the moment which the sensor has been queried
+     * @param value the value of the sensor
+     */
     public KaaValueSingle(Date timestamp, Object value) {
         this.timestamp = timestamp;
         this.value = value;
@@ -44,7 +52,7 @@ public class KaaValueSingle implements KaaValue{
     }
     
     /**
-     * Constructor to create an instance from a JSON
+     * Constructor to create an instance from a JSON (reverse operation than toJson or toKaaJson)
      * @param JSON JSON to be converted
      * @throws ParseException
      */
@@ -78,22 +86,42 @@ public class KaaValueSingle implements KaaValue{
     	this.assignValuesFromJson(new JSONObject(jsonValue));
     }
 
+    /**
+     * Function to get the moment which the sensor has been queried 
+     * @return the moment which the sensor has been queried
+     */
     public Date getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Function to set the moment which the sensor has been queried
+     * @param timestamp the moment which the sensor has been queried
+     */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Function to get the value of the sensor
+     * @return the value of the sensor
+     */
     public Object getValue() {
         return value;
     }
 
+    /**
+     * Function to set the value of the sensor
+     * @param value the values of the sensor
+     */
     public void setValue(Object value) {
         this.value = value;
     }
 
+    /**
+	 * Function to get a short description of the instance
+	 * @return a short description of the instance
+	 */
     @Override
     public String toString() {
         return "KaaValue{" +
@@ -102,8 +130,9 @@ public class KaaValueSingle implements KaaValue{
                 '}';
     }
 
-    /*
+    /**
 	 * KaaValue formatted in a JSON
+	 * @return the KaaValue instance formatted in a JSON
 	 */
     public String toJson(){
         String jsonString = "{";
@@ -111,11 +140,11 @@ public class KaaValueSingle implements KaaValue{
         jsonString += "\"value\":"+value;
         return jsonString + "}";
     }
-    
-    
+        
     /**
-     * KaaValue formatted in a Kaa-like JSON
-     * @param valueName Name of the key that this instance is representing
+     * KaaValue formatted in a Kaa-accepted JSON
+     * @return the KaaValue formatted in a Kaa-accepted JSON
+     * @throws ParseException
      */
     public String toKaaJson(String valueName) throws ParseException {
     	String Json = "{\"timestamp\": ";
@@ -124,8 +153,9 @@ public class KaaValueSingle implements KaaValue{
     	return Json;
     }
 
-    /*
+    /**
 	 * KaaValue formatted in a XML
+	 * @return the KaaValue instance formatted in a XML
 	 */
     public String toXML(){
         String xml = "<data>";
@@ -134,8 +164,9 @@ public class KaaValueSingle implements KaaValue{
         return xml + "</data>";
     }
 
-    /*
+    /**
 	 * KaaValue formatted in a CSV
+	 * @return the KaaValue instance formatted in a CSV
 	 */
     public String toCSV(){
         return timestamp.getTime() + "," + value;

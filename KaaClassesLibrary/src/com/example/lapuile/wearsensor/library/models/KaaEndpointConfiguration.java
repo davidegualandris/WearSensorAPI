@@ -8,18 +8,26 @@ import org.json.JSONObject;
 
 /*
  * Class used to represent a configuration of a given Endpoint
- * Don't get confused with the class KaaEndpoint
+ * !!! Don't get confused with the class KaaEndpoint !!!
+ * The dataNames variable represents the configuration of the endpoint. It means the name of values collected from the endpoint {"auto~humidity", "auto~temperature"}
  */
 public class KaaEndpointConfiguration {
 
 	private String endpointId; // example: a3b3dfde-4b95-4bdd-9746-5b994a65c0ce
 	private List<String> dataNames; // example: {"auto~humidity", "auto~temperature"}
 
+	/**
+	 * Void constructor
+	 */
 	public KaaEndpointConfiguration(){
 		this.endpointId = "";
 		this.dataNames = new ArrayList<String>();
 	}
 	
+	/**
+	 * Constructor to create an instance from a JSON (reverse operation than toJson)
+	 * @param JSON to be converted in an intance of this class
+	 */
 	public KaaEndpointConfiguration(String JSON){
 		super();
 		JSONObject json = new JSONObject(JSON);		
@@ -30,32 +38,61 @@ public class KaaEndpointConfiguration {
 		}		
 	}
 	
+	/**
+	 * Construct to use whether you know the endpointId and the configuration of the endpoint
+	 * @param endpointId the endpointId
+	 * @param dataNames the configuration of the endpoint
+	 */
 	public KaaEndpointConfiguration(String endpointId, List<String> dataNames) {
 		super();
 		this.endpointId = endpointId;
 		this.dataNames = dataNames;
 	}
 
-	public String getendpointId() {
-		return endpointId;
-	}
-	public void setendpointId(String endpointId) {
-		this.endpointId = endpointId;
-	}
+	/**
+     * Function to get the endpointId
+     * @return the endpointId
+     */
+    public String getEndpointId() {
+        return endpointId;
+    }
+
+    /**
+     * Function to set the endpointId
+     * @param endpointId the endpointId
+     */
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
+    }
+    
+    /**
+     * Function to get the configuration of the endpoint
+     * @return the configuration of the endpoint
+     */
 	public List<String> getDataNames() {
 		return dataNames;
 	}
+	
+	/**
+	 * Function to set the configuration of the endpoint
+	 * @param dataNames the configuration of the endpoint
+	 */
 	public void setDataNames(List<String> dataNames) {
 		this.dataNames = dataNames;
 	}
 
+	/**
+	 * Function to get a short description of the instance
+	 * @return a short description of the instance
+	 */
 	@Override
 	public String toString() {
 		return "KaaApplication [endpointId=" + endpointId + ", dataNames=" + dataNames + "]";
 	}
 
-	/*
+    /**
 	 * KaaEndpointConfiguration formatted in JSON
+	 * @return the KaaEndpointConfiguration instance formatted in a JSON
 	 */
 	public String toJSON() {
 		String json = "{\"endpointId\":\"" + endpointId +"\",\"dataNames\":[";
@@ -67,8 +104,9 @@ public class KaaEndpointConfiguration {
 		return json += "]}";
 	}
 
-	/*
+	/**
 	 * KaaEndpointConfiguration formatted in XML
+	 * @return the KaaEndpointConfiguration instance formatted in a XML
 	 */
 	public String toXML(){
 		String xml = "<endpoint id=\""+this.endpointId+"\">";
@@ -77,8 +115,9 @@ public class KaaEndpointConfiguration {
 		return xml + "</application>";
 	}
 
-	/*
+	/**
 	 * KaaEndpointConfiguration formatted in CSV
+	 * @return the KaaEndpointConfiguration instance formatted in a CSV
 	 */
 	public String toCSV(){
 		String csv = "";
