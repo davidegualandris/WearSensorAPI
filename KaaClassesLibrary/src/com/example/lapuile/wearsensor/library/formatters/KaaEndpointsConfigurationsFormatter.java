@@ -25,6 +25,8 @@ public class KaaEndpointsConfigurationsFormatter {
 	 */
 	public static List<KaaEndpointConfiguration> JSONtoKaaEndpointConfigurations(String encodedJSON) throws UnsupportedEncodingException{
 		List<KaaEndpointConfiguration> configs = new ArrayList<>();
+		if(encodedJSON == null || encodedJSON.equals(""))
+			return configs;
 		String JSON = URLDecoder.decode(encodedJSON, StandardCharsets.UTF_8.name());
 		JSONObject jsonObj = new JSONObject(JSON);
 		JSONArray jsonConfigurations = jsonObj.getJSONArray("config");

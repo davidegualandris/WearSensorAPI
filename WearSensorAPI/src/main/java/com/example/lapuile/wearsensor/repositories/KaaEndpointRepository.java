@@ -1,5 +1,6 @@
 package com.example.lapuile.wearsensor.repositories;
 
+import com.example.lapuile.wearsensor.connettors.KaaConnector;
 import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
 import com.example.lapuile.wearsensor.library.models.KaaEndpointConfiguration;
 import com.example.lapuile.wearsensor.library.models.interfaces.KaaValue;
@@ -11,12 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,8 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Class used to ask Kaa about endpoint values
@@ -220,7 +214,7 @@ public class KaaEndpointRepository {
 		}
         
         // default string
-        String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL + "?timeSeriesName="+
+        String APIRequest = Constants.ENDPOINT_REPOSITORY_URL + "?timeSeriesName="+
         					timeSeriesName+"&fromDate="+fromDate+"&toDate="+toDate;
         
         if(includeTime != null && !includeTime.isEmpty())
@@ -229,54 +223,15 @@ public class KaaEndpointRepository {
         if(sort != null && !sort.isEmpty())
         	APIRequest+="&sort="+sort;        
         
-        // Create URL
-        URL kaaApiUrl = null;
+        
         try {
-            kaaApiUrl = new URL(APIRequest);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new Exception("Malformed URL");
-        }
+        	String jsonString = KaaConnector.connect(APIRequest);
 
-        HttpsURLConnection kaaConnection = null;
-
-        // Create connection
-        try {
-            kaaConnection =
-                    (HttpsURLConnection) kaaApiUrl.openConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("Couldn't estabilish a connection with Kaa");
-        }
-
-        kaaConnection.setRequestProperty("Authorization", Constants.KAA_EPTS_API_BEARER_TOKEN);
-        try {
-            if (kaaConnection.getResponseCode() == 200) {
-
-                InputStream responseBody = kaaConnection.getInputStream();
-
-                InputStreamReader responseBodyReader =
-                        new InputStreamReader(responseBody, "UTF-8");
-
-                BufferedReader r = new BufferedReader(responseBodyReader);
-
-                StringBuilder response = new StringBuilder();
-                for (String line; (line = r.readLine()) != null; ) {
-                    response.append(line).append('\n');
-                }
-                String jsonString = response.toString();
-
-                // Close the connection
-                kaaConnection.disconnect();
-
-                List<KaaEndpoint> res = getKaaEndpointsFromJSON(jsonString, samplePeriod);
+            List<KaaEndpoint> res = getKaaEndpointsFromJSON(jsonString, samplePeriod);
+            
+            // Append results here
+            kaaEndpointsFinal.addAll(res);
                 
-                // Append results here
-                kaaEndpointsFinal.addAll(res);
-
-            } else {
-                // Error handling code goes here
-            }
         }catch (IOException | JSONException  e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
@@ -313,57 +268,18 @@ public class KaaEndpointRepository {
         String toDate = Constants.KAA_EPTS_API_DATE_FORMAT.format(new Date(tDate));
         
         // default string
-        String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL + "?timeSeriesName="+
+        String APIRequest = Constants.ENDPOINT_REPOSITORY_URL + "?timeSeriesName="+
         					timeSeriesName+"&fromDate="+fromDate+"&toDate="+toDate;
         
-        // Create URL
-        URL kaaApiUrl = null;
         try {
-            kaaApiUrl = new URL(APIRequest);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new Exception("Malformed URL");
-        }
 
-        HttpsURLConnection kaaConnection = null;
+        	String jsonString = KaaConnector.connect(APIRequest);
 
-        // Create connection
-        try {
-            kaaConnection =
-                    (HttpsURLConnection) kaaApiUrl.openConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("Couldn't estabilish a connection with Kaa");
-        }
-
-        kaaConnection.setRequestProperty("Authorization", Constants.KAA_EPTS_API_BEARER_TOKEN);
-        try {
-            if (kaaConnection.getResponseCode() == 200) {
-
-                InputStream responseBody = kaaConnection.getInputStream();
-
-                InputStreamReader responseBodyReader =
-                        new InputStreamReader(responseBody, "UTF-8");
-
-                BufferedReader r = new BufferedReader(responseBodyReader);
-
-                StringBuilder response = new StringBuilder();
-                for (String line; (line = r.readLine()) != null; ) {
-                    response.append(line).append('\n');
-                }
-                String jsonString = response.toString();
-
-                // Close the connection
-                kaaConnection.disconnect();
-
-                List<KaaEndpoint> res = getKaaEndpointsConfigurationFromJSON(jsonString);
+            List<KaaEndpoint> res = getKaaEndpointsConfigurationFromJSON(jsonString);
+            
+            // Append results here
+            kaaEndpointsFinal.addAll(res);
                 
-                // Append results here
-                kaaEndpointsFinal.addAll(res);
-
-            } else {
-                // Error handling code goes here
-            }
         }catch (IOException | JSONException  e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
@@ -395,8 +311,8 @@ public class KaaEndpointRepository {
         	KaaEndpointConfiguration endpointConfig = kaaEndpointConfigurations.get(i);
         	
         	// default string
-            String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
-            					+"&endpointId="+endpointConfig.getendpointId()+"&fromDate="
+            String APIRequest = Constants.ENDPOINT_REPOSITORY_URL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
+            					+"&endpointId="+endpointConfig.getEndpointId()+"&fromDate="
             					+fromDate+"&toDate="+toDate;
             
             if(includeTime != null && !includeTime.isEmpty())
@@ -405,55 +321,16 @@ public class KaaEndpointRepository {
             if(sort != null && !sort.isEmpty())
             	APIRequest+="&sort="+sort;        
             
-            // Create URL
-            URL kaaApiUrl = null;
+            
             try {
-                kaaApiUrl = new URL(APIRequest);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                throw new Exception("Malformed URL");
-            }
+                
+            	String jsonString = KaaConnector.connect(APIRequest);
+            	
+                List<KaaEndpoint> res = getKaaEndpointsFromJSON(jsonString, samplePeriod);
+                
+                // Append results here
+                kaaEndpointsFinal.addAll(res);
 
-            HttpsURLConnection kaaConnection = null;
-
-            // Create connection
-            try {
-                kaaConnection =
-                        (HttpsURLConnection) kaaApiUrl.openConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new Exception("Couldn't estabilish a connection with Kaa");
-            }
-
-            kaaConnection.setRequestProperty("Authorization", Constants.KAA_EPTS_API_BEARER_TOKEN);
-            try {
-                if (kaaConnection.getResponseCode() == 200) {
-
-                    InputStream responseBody = kaaConnection.getInputStream();
-
-                    InputStreamReader responseBodyReader =
-                            new InputStreamReader(responseBody, "UTF-8");
-
-                    BufferedReader r = new BufferedReader(responseBodyReader);
-
-                    StringBuilder response = new StringBuilder();
-                    for (String line; (line = r.readLine()) != null; ) {
-                        response.append(line).append('\n');
-                    }
-                    String jsonString = response.toString();
-
-                    // Close the connection
-                    kaaConnection.disconnect();
-                    
-                    List<KaaEndpoint> res = getKaaEndpointsFromJSON(jsonString, samplePeriod);
-                    
-                    // Append results here
-                    kaaEndpointsFinal.addAll(res);
-                    
-                    
-                } else {
-                    // Error handling code goes here
-                }
             }catch (IOException | JSONException  e) {
                 e.printStackTrace();
                 throw new Exception(e.getMessage());
@@ -489,59 +366,17 @@ public class KaaEndpointRepository {
         	KaaEndpointConfiguration endpointConfig = kaaEndpointConfigurations.get(i);
         	
         	// default string
-            String APIRequest = Constants.ENDPOINT_REPOSITORY_BASE_URL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
-            					+"&endpointId="+endpointConfig.getendpointId()+"&fromDate="
+            String APIRequest = Constants.ENDPOINT_REPOSITORY_URL+"?timeSeriesName="+String.join(",", endpointConfig.getDataNames())
+            					+"&endpointId="+endpointConfig.getEndpointId()+"&fromDate="
             					+fromDate+"&toDate="+toDate;
             
-            // Create URL
-            URL kaaApiUrl = null;
             try {
-                kaaApiUrl = new URL(APIRequest);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                throw new Exception("Malformed URL");
-            }
-
-            HttpsURLConnection kaaConnection = null;
-
-            // Create connection
-            try {
-                kaaConnection =
-                        (HttpsURLConnection) kaaApiUrl.openConnection();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new Exception("Couldn't estabilish a connection with Kaa");
-            }
-
-            kaaConnection.setRequestProperty("Authorization", Constants.KAA_EPTS_API_BEARER_TOKEN);
-            try {
-                if (kaaConnection.getResponseCode() == 200) {
-
-                    InputStream responseBody = kaaConnection.getInputStream();
-
-                    InputStreamReader responseBodyReader =
-                            new InputStreamReader(responseBody, "UTF-8");
-
-                    BufferedReader r = new BufferedReader(responseBodyReader);
-
-                    StringBuilder response = new StringBuilder();
-                    for (String line; (line = r.readLine()) != null; ) {
-                        response.append(line).append('\n');
-                    }
-                    String jsonString = response.toString();
-
-                    // Close the connection
-                    kaaConnection.disconnect();
-                    
-                    List<KaaEndpoint> res = getKaaEndpointsConfigurationFromJSON(jsonString);
-                    
-                    // Append results here
-                    kaaEndpointsFinal.addAll(res);
-                    
-                    
-                } else {
-                    // Error handling code goes here
-                }
+        		String jsonString = KaaConnector.connect(APIRequest); 
+                
+                List<KaaEndpoint> res = getKaaEndpointsConfigurationFromJSON(jsonString);
+                
+                // Append results here
+                kaaEndpointsFinal.addAll(res);
             }catch (IOException | JSONException  e) {
                 e.printStackTrace();
                 throw new Exception(e.getMessage());

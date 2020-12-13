@@ -1,6 +1,5 @@
 package com.example.lapuile.wearsensor.handlers;
 
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +17,6 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import com.example.lapuile.wearsensor.library.formatters.KaaEndpointsConfigurationsFormatter;
-import com.example.lapuile.wearsensor.library.utils.Constants;
 import com.example.lapuile.wearsensor.library.formatters.KaaEndpointsValuesFormatter;
 import com.example.lapuile.wearsensor.library.models.KaaApplication;
 import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
@@ -26,28 +24,46 @@ import com.example.lapuile.wearsensor.library.models.KaaEndpointConfiguration;
 import com.example.lapuile.wearsensor.repositories.KaaApplicationRepository;
 import com.example.lapuile.wearsensor.repositories.KaaEndpointRepository;
 import com.example.lapuile.wearsensor.senders.KaaEndpointSenders;
+import com.example.lapuile.wearsensor.utils.Constants;
 
 /**
  * Class that allows you to directly respond to calls to the API defined in this project
- * /time-series/config/{endpointIds} to get the "dataNames" of the specified endpoints
- * /time-series/config/{endpointId}&{dataName} to check the availability of the sensor "dataName" in the specified endpoint 
- * /time-series/last to get all the data of the last 24 hours in JSON format
- * /time-series/data/{params} to get data with custom parameters
- * /time-series/data/{data} to store the specified data in the platform
+ * /kaa/scan to get the "dataNames" for every endpoint in a tree structure
+ * /kaa/sensors/{endpointIds} to get the "dataNames" of the specified endpoints
+ * /kaa/sensor/{endpointId}&{dataName} to check the availability of the sensor "dataName" in the specified endpoint 
+ * /kaa/play to get all the data of the last 24 hours in JSON format
+ * /kaa/play/{params} to get data with custom parameters
+ * /kaa/store/{data} to store the specified data in the platform
  */
-@Path("/time-series")
-public class HandleAPICalls {
-
+@Path("/kaa")
+public class HandleAPICalls{
+	
 	/**
 	 * Function to "retrieve" the names of the values that the Kaa application is receiving
-	 * @param endpointID EndpointIDs whose data you want to retrieve (endpointIds separated with ,)
-	 * @param dataName sensor name to check for availability within the endpointId
 	 * @return JSON mappable with the KaaApplication model
 	 */
 	@GET
-	@Path("config")
+	@Path("scan")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getApplicationConfiguration(@QueryParam("endpointId") String endpointId) {
+	public String scan() {
+		KaaApplication kaaApplication;
+		try {
+			kaaApplication = KaaApplicationRepository.getKaaApplicationDataNames(null);
+		} catch (Exception e) {
+			return "{\"message\": " + e.getMessage() + "}";
+		}
+		return kaaApplication.toJSON();
+	}
+	
+	/**
+	 * Function to "retrieve" the names of the values that the Kaa application is receiving
+	 * @param endpointID EndpointIDs whose data you want to retrieve (endpointIds separated with ,)
+	 * @return JSON mappable with the KaaApplication model
+	 */
+	@GET
+	@Path("sensors")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String sensors(@QueryParam("endpointId") String endpointId) {
 		KaaApplication kaaApplication;
 		try {
 			kaaApplication = KaaApplicationRepository.getKaaApplicationDataNames(endpointId);
@@ -55,6 +71,28 @@ public class HandleAPICalls {
 			return "{\"message\": " + e.getMessage() + "}";
 		}
 		return kaaApplication.toJSON();
+	}
+	
+	/**
+	 * Function to check the availability of the sensor "dataName" in the specified endpoint. If more than one endpoint is specified, then it checks only the first one
+	 * @param endpointID EndpointID whose data you want to retrieve
+	 * @param dataName sensor name to check for availability within the endpointId
+	 * @return HTTP response. OK/200 if the sensor exists within the endpoint. 404 otherwise.
+	 */
+	@GET
+	@Path("sensor")
+	public Response sensor(@QueryParam("endpointId") String endpointId,
+												@QueryParam("dataName") String dataName) {
+		
+		if(endpointId == null || endpointId.equals("") || dataName == null || dataName.equals(""))
+			return Response.status(Status.NOT_FOUND).build();
+					
+		try {
+			return KaaApplicationRepository.checkAvailability(endpointId,dataName);
+		}catch(Exception e) {
+			return Response.status(Status.NOT_FOUND).build();
+		}
+		
 	}
 
 	/**
@@ -113,9 +151,9 @@ public class HandleAPICalls {
 	 * @throws Exception 
 	 */	
 	@GET	  
-	@Path("last")	  
+	@Path("play")	  
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getAllEndpointsData() throws Exception {	  
+	public String playAll() throws Exception {	  
 		List<KaaEndpointConfiguration> config;
 		try {
 			config = this.getDefaultApplicationConfiguration();
@@ -127,7 +165,7 @@ public class HandleAPICalls {
 		Date toDate = new Date(System.currentTimeMillis());
 		Date fromDate = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
 
-		return this.getFormattedDataFromKaa(config, fromDate, toDate, "both", "ASC", "JSON", 1000); 
+		return this.getFormattedDataFromKaa(config, fromDate, toDate, Constants.DEFAULT_INCLUDE_TIME, Constants.DEFAULT_SORT, Constants.DEFAULT_OUTPUT_FORMAT, Constants.DEFAULT_SAMPLE_PERIOD); 
 	}
 	
 	/**
@@ -142,9 +180,9 @@ public class HandleAPICalls {
 	 * @return output in the desired format
 	 */
 	@GET		  
-	@Path("data")		  
+	@Path("play")		  
 	@Produces(MediaType.TEXT_PLAIN)
-	public String getEndpointData(@QueryParam("kaaEndpointConfigurations") String kaaEndpointConfigurations,
+	public String play(@QueryParam("kaaEndpointConfigurations") String kaaEndpointConfigurations,
 			@QueryParam("fromDate") long fromDate, @QueryParam("toDate") long toDate, @QueryParam("includeTime") String includeTime,
 			@QueryParam("sort") String sort, @QueryParam("format") String format, @QueryParam("periodSample") long periodSample) {
 
@@ -162,7 +200,7 @@ public class HandleAPICalls {
 		// encode the kaaEndpointConfigurations
 		try {
 			config = KaaEndpointsConfigurationsFormatter.JSONtoKaaEndpointConfigurations(kaaEndpointConfigurations);
-		} catch (UnsupportedEncodingException e1) {
+		} catch (Exception e1) {
 			return "{\"message\": " + e1.getMessage() + "}";
 		}
 		
@@ -186,19 +224,20 @@ public class HandleAPICalls {
 	 * @throws ParseException 
 	 */
 	@POST
-	@Path("data")
+	@Path("store")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response saveKaaEndpointData(String data) throws MqttException, ParseException{
+	public Response store(String data) throws MqttException, ParseException{
 		if(data == null || data.isEmpty())
 			return Response.status(Status.BAD_REQUEST).build();
-		
-		KaaEndpointSenders k = KaaEndpointSenders.getInstance();
-		Response resp = null;
+
+		Response resp = Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		try {
+			KaaEndpointSenders k = KaaEndpointSenders.getInstance();
 			resp = k.sendValueToKaa(new KaaEndpoint(data));
-		}catch(Exception e) {
+		} catch (Exception e) {
 			Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
+		
 		return resp;
 	}
 }

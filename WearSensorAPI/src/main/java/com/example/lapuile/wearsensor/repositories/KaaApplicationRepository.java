@@ -1,20 +1,17 @@
 package com.example.lapuile.wearsensor.repositories;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.example.lapuile.wearsensor.connettors.KaaConnector;
 import com.example.lapuile.wearsensor.library.models.KaaApplication;
 import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
 import com.example.lapuile.wearsensor.library.models.KaaEndpointConfiguration;
@@ -33,66 +30,28 @@ public class KaaApplicationRepository {
     private static List<String> getAllKaaApplicationDataNames() throws Exception
     {    	
     	List<String> dataNames = new ArrayList<>();
-    	// Create URL
-        URL kaaApiUrl = null;
-        try {
-            kaaApiUrl = new URL(Constants.APPLICATION_REPOSITORY_BASE_URL);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            throw new Exception("Malformed URL");
-        }
     	
-        HttpsURLConnection kaaConnection = null;
-
-        // Create connection
         try {
-            kaaConnection =
-                    (HttpsURLConnection) kaaApiUrl.openConnection();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new Exception("Couldn't estabilish a connection with Kaa");
-        }
-
-        kaaConnection.setRequestProperty("Authorization", Constants.KAA_EPTS_API_BEARER_TOKEN);
-        try {
-            if (kaaConnection.getResponseCode() == 200) {
-            	
-            	InputStream responseBody = kaaConnection.getInputStream();
-
-                InputStreamReader responseBodyReader =
-                        new InputStreamReader(responseBody, "UTF-8");
-
-                BufferedReader r = new BufferedReader(responseBodyReader);
-
-                StringBuilder response = new StringBuilder();
-                for (String line; (line = r.readLine()) != null; ) {
-                    response.append(line).append('\n');
-                }
-                String jsonString = response.toString();
-
-                // Close the connection
-                kaaConnection.disconnect();
-            	
-                JSONObject jsonObject = new JSONObject(jsonString);
-                
-                // Get the keys -> just one in our case -> the applicationName
-                Iterator<String> keys = jsonObject.keys();
-                while(keys.hasNext()) {
-                	String applicationName = keys.next();
-                    if (jsonObject.getJSONArray(applicationName) instanceof JSONArray) {
-                    	JSONArray jsonValues = jsonObject.getJSONArray(applicationName);
-                    	// Let's iterate over the values
-                        for (int i = 0 ; i < jsonValues.length(); i++) {
-                        	// Get the object
-                            JSONObject jsonValue = jsonValues.getJSONObject(i);
-                            dataNames.add(jsonValue.getString("name"));
-                        }
+            
+        	String jsonString = KaaConnector.connect(Constants.APPLICATION_REPOSITORY_URL);
+        	
+            JSONObject jsonObject = new JSONObject(jsonString);
+            
+            // Get the keys -> just one in our case -> the applicationName
+            Iterator<String> keys = jsonObject.keys();
+            while(keys.hasNext()) {
+            	String applicationName = keys.next();
+                if (jsonObject.getJSONArray(applicationName) instanceof JSONArray) {
+                	JSONArray jsonValues = jsonObject.getJSONArray(applicationName);
+                	// Let's iterate over the values
+                    for (int i = 0 ; i < jsonValues.length(); i++) {
+                    	// Get the object
+                        JSONObject jsonValue = jsonValues.getJSONObject(i);
+                        dataNames.add(jsonValue.getString("name"));
                     }
                 }
-                
-            } else {
-                // Error handling code goes here
             }
+                
         }catch (IOException e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
@@ -135,6 +94,24 @@ public class KaaApplicationRepository {
     	// Then i am formatting the result
     	return convertKaaEndpointToKaaApplication(kaaEndPoints);
     }
+    
+    /**
+     * Function to check the availability of the sensor "dataName" in the specified endpoint. If more than one endpoint is specified, then it checks only the first one
+     * @param endpointID EndpointID whose data you want to retrieve
+	 * @param dataName sensor name to check for availability within the endpointId
+     * @return HTTP response. OK/200 if the sensor exists within the endpoint. 404 otherwise.
+     * @throws Exception
+     */
+     public static Response checkAvailability(String endpointId, String dataName) throws Exception{
+    	
+    	// If more than one endpoint is specified, then it checks only the first one
+     	KaaApplication kaaApplication = getKaaApplicationDataNames(endpointId.contains(",") ? endpointId.split(",")[0] : endpointId);
+     	
+     	// since i asked for just one endpoint, i am sure that getEndpoints().size == 1. If not, an error is throwed
+      	return kaaApplication.getEndpoints().get(0).getDataNames().contains(dataName) ?
+     			 Response.status(Status.OK).build() :
+     				Response.status(Status.NOT_FOUND).build();
+     }
     
     /**
      * Since to get the configuration data we need to query the Kaa EPTS API 
