@@ -29,7 +29,7 @@ public class KaaEndpointConfiguration {
 	 * @param JSON to be converted in an intance of this class
 	 */
 	public KaaEndpointConfiguration(String JSON){
-		super();
+		this.dataNames = new ArrayList<String>();
 		JSONObject json = new JSONObject(JSON);		
 		this.endpointId = json.getString("endpointId");		
 		JSONArray dataNames = json.getJSONArray("dataNames");
@@ -44,7 +44,6 @@ public class KaaEndpointConfiguration {
 	 * @param dataNames the configuration of the endpoint
 	 */
 	public KaaEndpointConfiguration(String endpointId, List<String> dataNames) {
-		super();
 		this.endpointId = endpointId;
 		this.dataNames = dataNames;
 	}

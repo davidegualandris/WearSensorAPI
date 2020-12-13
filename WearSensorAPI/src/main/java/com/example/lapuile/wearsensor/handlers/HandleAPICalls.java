@@ -1,6 +1,5 @@
 package com.example.lapuile.wearsensor.handlers;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +12,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 import com.example.lapuile.wearsensor.library.formatters.KaaEndpointsConfigurationsFormatter;
 import com.example.lapuile.wearsensor.library.formatters.KaaEndpointsValuesFormatter;
@@ -220,13 +217,11 @@ public class HandleAPICalls{
 	 * Function to store the specified data in the platform 
 	 * @param data JSON obtained from the function KaaEndpoint.toJson()
 	 * @return HTTP response representing the result of the operation (if operation completed successfully OK / 200)
-	 * @throws MqttException 
-	 * @throws ParseException 
 	 */
 	@POST
 	@Path("store")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response store(String data) throws MqttException, ParseException{
+	public Response store(String data){
 		if(data == null || data.isEmpty())
 			return Response.status(Status.BAD_REQUEST).build();
 
