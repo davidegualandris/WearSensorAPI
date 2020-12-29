@@ -54,7 +54,7 @@ public class KaaValueSingle implements KaaValue{
     /**
      * Constructor to create an instance from a JSON (reverse operation than toJson or toKaaJson)
      * @param JSON JSON to be converted
-     * @throws ParseException
+     * @throws ParseException If is not possible to convert the JSON in an instance of this class
      */
     public KaaValueSingle(String JSON) throws ParseException {
     	JSONObject obj = new JSONObject(JSON);
@@ -144,9 +144,8 @@ public class KaaValueSingle implements KaaValue{
     /**
      * KaaValue formatted in a Kaa-accepted JSON
      * @return the KaaValue formatted in a Kaa-accepted JSON
-     * @throws ParseException
      */
-    public String toKaaJson(String valueName) throws ParseException {
+    public String toKaaJson(String valueName){
     	String Json = "{\"timestamp\": ";
     	Json += timestamp.getTime();
     	Json += ",\""+valueName.replace(" ","")+"\":" + value + "}";

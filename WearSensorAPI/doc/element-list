@@ -1,0 +1,5 @@
+com.example.lapuile.wearsensor.connettors
+com.example.lapuile.wearsensor.handlers
+com.example.lapuile.wearsensor.repositories
+com.example.lapuile.wearsensor.senders
+com.example.lapuile.wearsensor.utils

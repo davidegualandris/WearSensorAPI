@@ -196,7 +196,7 @@ public class KaaEndpointRepository {
 	 * @param sort           data sorting [ASC, DESC]
 	 * @param samplePeriod   The data sampling period
 	 * @return List of KaaEndpoint
-	 * @throws Exception
+	 * @throws Exception If something goes wrong while retrieving the data
 	 */
     public List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName, String fromDate, String toDate,
     												String includeTime, String sort, long samplePeriod)
@@ -245,7 +245,7 @@ public class KaaEndpointRepository {
 	 * Function that returns, for every endpoint, the data obtained from Kaa EPTS API without values. Used to get the dataNamesof every endpoint
 	 * @param timeSeriesName dataNames that you want to retrieve for every end(ex. "temperature,humidity")
 	 * @return List of KaaEndpoint without any values inside
-	 * @throws Exception
+	 * @throws Exception If something goes wrong
 	 */
     public static List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName) throws Exception{
 		
@@ -297,7 +297,7 @@ public class KaaEndpointRepository {
 	 * @param sort           data sorting [ASC, DESC]
 	 * @param samplePeriod   The data sampling period
 	 * @return List of KaaEndpoint
-	 * @throws Exception
+	 * @throws Exception If something goes wrong while retrieving the data
 	 */
     public static List<KaaEndpoint> getKaaEndpointsData(List<KaaEndpointConfiguration> kaaEndpointConfigurations,
     		String fromDate, String toDate, String includeTime, String sort, long samplePeriod)
@@ -346,7 +346,7 @@ public class KaaEndpointRepository {
 	 * Function that returns, for the specified endpoints, the data obtained from Kaa EPTS API without values. Used to get the dataNames of selected endpoint
 	 * @param kaaEndpointConfigurations List of KaaEndpointConfiguration that tells the API which data retrieve for which endpoint
 	 * @return List of KaaEndpoint without any values inside
-	 * @throws Exception
+	 * @throws Exception If something goes wrong while retrieving the data
 	 */
     public static List<KaaEndpoint> getKaaEndpointsData(List<KaaEndpointConfiguration> kaaEndpointConfigurations) throws Exception{
 		

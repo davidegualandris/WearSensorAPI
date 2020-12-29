@@ -23,9 +23,9 @@ public class KaaConnector {
 	
 	/**
 	 * Class that try to get connected with the Kaa platform through the Kaa API
-	 * @param url url to be added to the KAA_EPTS_API_BASE_URL
-	 * @return the json given by kaa if it could connect. Error otherwise.
-	 * @throws Exception 
+	 * @param url Url to be added to the KAA_EPTS_API_BASE_URL
+	 * @return The JSON given by Kaa if it could connect. Error otherwise.
+	 * @throws Exception If something goes wrong (Malformed URL, Couldn't estabilish a connection with Kaa, Couldn't connect with the platform)
 	 */
 	public static String connect(String url) throws Exception {
 		// Create URL
@@ -75,7 +75,7 @@ public class KaaConnector {
 	/**
 	 * Function to connect the API to the Kaa MQTT Server
 	 * @return Array of 2 objects: in the first place an instance of MqttClient, in the second one an instance of MqttConnectOptions
-	 * @throws MqttException
+	 * @throws MqttException If is not possible to get connected with the Kaa MQTT server
 	 */
 	public static Object[] connect() throws MqttException {
         MqttClient mqttClient = new MqttClient(Constants.KAA_MQTT_SERVER, "WearSensorAPI", new MemoryPersistence());
@@ -94,7 +94,7 @@ public class KaaConnector {
 	 * @param connOpts instance of MqttConnectOptions
 	 * @param mqttClient instance of MqttClient
 	 * @return true if the API can reconnect to the Kaa MQTT Server, error otherwise
-	 * @throws Exception
+	 * @throws Exception If is not possible to get connected with the Kaa MQTT server
 	 */
 	public static boolean connect(MqttConnectOptions connOpts, MqttClient mqttClient) throws Exception {
 		// Try to get connected 3 times

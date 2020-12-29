@@ -22,7 +22,7 @@ public class KaaEndpointSenders {
 	
 	/**
 	 * Constructor to create the instance of the KaaEndpointSenders. The connection with Kaa is defined here.
-	 * @throws Exception 
+	 * @throws Exception If is not possible to get connected with the Kaa MQTT server 
 	 */
     private KaaEndpointSenders() throws Exception{    	
     	try {
@@ -40,6 +40,7 @@ public class KaaEndpointSenders {
                 System.out.println("cause "+me.getCause());
                 System.out.println("excep "+me);
                 me.printStackTrace();
+                throw new MqttException(me);
     		}catch(Exception e1) {
     			// generic error
     			e1.printStackTrace();
@@ -51,7 +52,7 @@ public class KaaEndpointSenders {
     /**
      * Function to get the single instance of the class
      * @return the instance of the class
-     * @throws Exception 
+     * @throws Exception If is not possible to get connected with the Kaa MQTT server
      */
     public static synchronized KaaEndpointSenders getInstance() throws Exception{
         if (instance==null)

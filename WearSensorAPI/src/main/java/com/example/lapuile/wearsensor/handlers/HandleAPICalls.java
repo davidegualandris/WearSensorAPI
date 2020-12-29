@@ -27,7 +27,7 @@ import com.example.lapuile.wearsensor.utils.Constants;
  * Class that allows you to directly respond to calls to the API defined in this project
  * /kaa/scan to get the "dataNames" for every endpoint in a tree structure
  * /kaa/sensors/{endpointIds} to get the "dataNames" of the specified endpoints
- * /kaa/sensor/{endpointId}&{dataName} to check the availability of the sensor "dataName" in the specified endpoint 
+ * /kaa/sensor/{endpointId}{dataName} to check the availability of the sensor "dataName" in the specified endpoint 
  * /kaa/play to get all the data of the last 24 hours in JSON format
  * /kaa/play/{params} to get data with custom parameters
  * /kaa/store/{data} to store the specified data in the platform
@@ -54,7 +54,7 @@ public class HandleAPICalls{
 	
 	/**
 	 * Function to "retrieve" the names of the values that the Kaa application is receiving
-	 * @param endpointID EndpointIDs whose data you want to retrieve (endpointIds separated with ,)
+	 * @param endpointId EndpointIDs whose data you want to retrieve (endpointIds separated with ,)
 	 * @return JSON mappable with the KaaApplication model
 	 */
 	@GET
@@ -72,7 +72,7 @@ public class HandleAPICalls{
 	
 	/**
 	 * Function to check the availability of the sensor "dataName" in the specified endpoint. If more than one endpoint is specified, then it checks only the first one
-	 * @param endpointID EndpointID whose data you want to retrieve
+	 * @param endpointId EndpointID whose data you want to retrieve
 	 * @param dataName sensor name to check for availability within the endpointId
 	 * @return HTTP response. OK/200 if the sensor exists within the endpoint. 404 otherwise.
 	 */
@@ -145,7 +145,7 @@ public class HandleAPICalls{
 	/**
 	 * Function to get all the data of the last 24 hours in JSON format
 	 * @return All data of all endpoints from the last 24 hours in JSON format
-	 * @throws Exception 
+	 * @throws Exception If is not possible to retrieve the data from Kaa
 	 */	
 	@GET	  
 	@Path("play")	  

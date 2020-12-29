@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.example.lapuile.wearsensor.connettors"},{"l":"com.example.lapuile.wearsensor.handlers"},{"l":"com.example.lapuile.wearsensor.repositories"},{"l":"com.example.lapuile.wearsensor.senders"},{"l":"com.example.lapuile.wearsensor.utils"}]

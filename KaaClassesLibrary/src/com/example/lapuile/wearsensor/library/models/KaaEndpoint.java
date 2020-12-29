@@ -42,8 +42,8 @@ public class KaaEndpoint {
     
     /**
      * Constructor to create an instance from a JSON (reverse operation than toJson)
-     * @param JSON to be converted in an intance of this class
-     * @throws Exception
+     * @param JSON to be converted in an instance of this class
+     * @throws Exception If is not possible to convert the given JSON in an instance of KaaEndpoint
      */
     public KaaEndpoint(String JSON) throws Exception {
     	JSONObject obj = new JSONObject(JSON);
@@ -154,7 +154,7 @@ public class KaaEndpoint {
     /**
      * KaaEndpoint formatted in a Kaa-accepted JSON
      * @return the KaaEndpoint formatted in a Kaa-accepted JSON
-     * @throws ParseException
+     * @throws ParseException If is not possible to convert the class in a JSON
      */
     public String toKaaJson() throws ParseException{
         //String jsonString = "{\"" + endpointId + "\":{";
@@ -178,7 +178,7 @@ public class KaaEndpoint {
     /**
      * Function to get a list of JSON representing the various values collected from the endpoint
      * @return A list of JSON representing the various values collected from the endpoint
-     * @throws ParseException
+     * @throws ParseException If is not possible to convert the class in a JSON
      */
     public List<String> getValuesJsonList() throws ParseException{
     	List<String> values = new ArrayList<String>();

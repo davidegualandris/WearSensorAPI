@@ -56,7 +56,7 @@ public class KaaValueMulti implements KaaValue{
     /**
      * Constructor to create an instance from a JSON (reverse operation than toJson or toKaaJson)
      * @param JSON JSON to be converted
-     * @throws ParseException
+     * @throws ParseException If is not possible to convert the JSON in an instance of this class
      */
     public KaaValueMulti(String JSON) throws ParseException {
     	JSONObject obj = new JSONObject(JSON);
@@ -81,7 +81,7 @@ public class KaaValueMulti implements KaaValue{
      * Constructor to create an instance from given timestamp and jsonValue
      * Made up for be called from the WearSensorAPI
      * @param timestamp Timestamp of the value
-     * @param jsonValue JSON to represent the actual value
+     * @param jsonValues JSON to represent the actual value
      */
     public KaaValueMulti(Date timestamp, String jsonValues){
     	this.timestamp = timestamp;
@@ -158,7 +158,6 @@ public class KaaValueMulti implements KaaValue{
 	/**
      * KaaValue formatted in a Kaa-accepted JSON
      * @return the KaaValue formatted in a Kaa-accepted JSON
-     * @throws ParseException
      */
 	public String toKaaJson(String valueName) {		
 		String jsonString = "{\"timestamp\": ";

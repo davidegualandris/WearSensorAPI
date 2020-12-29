@@ -64,7 +64,7 @@ public class KaaApplicationRepository {
     * Function to return the KaaApplication configurations of the specified endpoints (all possible configurations if equals to "")
     * @param endpointId Endpoints whose configuration I want to retrieve separated with ,
     * @return Instance of KaaApplication containing the requested configuration
-    * @throws Exception
+    * @throws Exception If is not possible to retrieve the data names from Kaa
     */
     public static KaaApplication getKaaApplicationDataNames(String endpointId) throws Exception{
     	
@@ -97,10 +97,10 @@ public class KaaApplicationRepository {
     
     /**
      * Function to check the availability of the sensor "dataName" in the specified endpoint. If more than one endpoint is specified, then it checks only the first one
-     * @param endpointID EndpointID whose data you want to retrieve
+     * @param endpointId EndpointID whose data you want to retrieve
 	 * @param dataName sensor name to check for availability within the endpointId
      * @return HTTP response. OK/200 if the sensor exists within the endpoint. 404 otherwise.
-     * @throws Exception
+     * @throws Exception If is not possible to retrieve the data names from Kaa
      */
      public static Response checkAvailability(String endpointId, String dataName) throws Exception{
     	
