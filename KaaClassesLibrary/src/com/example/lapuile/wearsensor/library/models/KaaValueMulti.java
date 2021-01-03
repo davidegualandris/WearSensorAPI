@@ -157,6 +157,7 @@ public class KaaValueMulti implements KaaValue{
 	
 	/**
      * KaaValue formatted in a Kaa-accepted JSON
+     * @param valueName the name of the value to be embedded
      * @return the KaaValue formatted in a Kaa-accepted JSON
      */
 	public String toKaaJson(String valueName) {		

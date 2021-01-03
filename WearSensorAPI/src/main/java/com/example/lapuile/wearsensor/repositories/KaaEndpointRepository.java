@@ -198,7 +198,7 @@ public class KaaEndpointRepository {
 	 * @return List of KaaEndpoint
 	 * @throws Exception If something goes wrong while retrieving the data
 	 */
-    public List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName, String fromDate, String toDate,
+    public static List<KaaEndpoint> getKaaEndpointsData(String timeSeriesName, String fromDate, String toDate,
     												String includeTime, String sort, long samplePeriod)
     											throws Exception{    	
     	

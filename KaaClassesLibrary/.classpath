@@ -3,5 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/utente/Desktop/Davide/Bicocca/Magistrale/Tesi/WearSensorAPI/KaaClassesLibrary/json-20200518.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_261/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

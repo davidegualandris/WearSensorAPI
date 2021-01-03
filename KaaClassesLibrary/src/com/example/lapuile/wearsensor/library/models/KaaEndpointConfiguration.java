@@ -6,10 +6,11 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/*
+//!!! Don't get confused with the class KaaEndpoint !!!
+//The dataNames variable represents the configuration of the endpoint. It means the name of values collected from the endpoint {"auto~humidity", "auto~temperature"}
+
+/**
  * Class used to represent a configuration of a given Endpoint
- * !!! Don't get confused with the class KaaEndpoint !!!
- * The dataNames variable represents the configuration of the endpoint. It means the name of values collected from the endpoint {"auto~humidity", "auto~temperature"}
  */
 public class KaaEndpointConfiguration {
 

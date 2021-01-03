@@ -12,10 +12,11 @@ import org.json.JSONObject;
 
 import com.example.lapuile.wearsensor.library.models.interfaces.KaaValue;
 
-/*
+//!!! Don't get confused with the class KaaEndpointConfiguration !!!
+//The values variable represents the actual values collected from the endpoint
+
+/**
  * Class used to represent the values of a given Endpoint
- * !!! Don't get confused with the class KaaEndpointConfiguration !!!
- * The values variable represents the actual values collected from the endpoint
  */
 public class KaaEndpoint {
 
@@ -157,20 +158,18 @@ public class KaaEndpoint {
      * @throws ParseException If is not possible to convert the class in a JSON
      */
     public String toKaaJson() throws ParseException{
-        //String jsonString = "{\"" + endpointId + "\":{";
     	String jsonString = "[";
         for(String key : values.keySet()){
-            //jsonString += "\""+key+"\":[";
             for(int i = 0; i < values.get(key).size(); i++){
                 jsonString += values.get(key).get(i).toKaaJson(key);
                 if(i!=values.get(key).size()-1)
                     jsonString += ",";
             }
-            //jsonString += "],";
+            jsonString += ",";
         }
-        /*//remove last comma
+        //remove last comma
         if(jsonString.charAt(jsonString.length() - 1) == ',')
-        	jsonString = jsonString.substring(0, jsonString.length() - 1);*/
+        	jsonString = jsonString.substring(0, jsonString.length() - 1);
         jsonString += "]";
         return jsonString;
     }
