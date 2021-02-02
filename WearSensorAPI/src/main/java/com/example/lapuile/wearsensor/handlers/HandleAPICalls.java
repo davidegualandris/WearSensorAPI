@@ -1,9 +1,7 @@
 package com.example.lapuile.wearsensor.handlers;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,7 +18,6 @@ import com.example.lapuile.wearsensor.library.formatters.KaaEndpointsValuesForma
 import com.example.lapuile.wearsensor.library.models.KaaApplication;
 import com.example.lapuile.wearsensor.library.models.KaaEndpoint;
 import com.example.lapuile.wearsensor.library.models.KaaEndpointConfiguration;
-import com.example.lapuile.wearsensor.library.models.interfaces.KaaValue;
 import com.example.lapuile.wearsensor.repositories.KaaApplicationRepository;
 import com.example.lapuile.wearsensor.repositories.KaaEndpointRepository;
 import com.example.lapuile.wearsensor.senders.KaaEndpointSenders;
